@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Workspace.h"
 
 int main(int argc, const char *argv[]) {
     
@@ -15,13 +16,16 @@ int main(int argc, const char *argv[]) {
         NSLog(@"OCMAT starts.");
         printf("\n");
         
+        Workspace *workspace = [[Workspace alloc] init];
+        
         BOOL exit_flag = NO;
         
         while(exit_flag == NO) {
             
             printf(">>  "); // Prompt
             char cInput[128];
-            scanf("%s", cInput);
+//            scanf("%[^\n]", cInput);
+            gets(cInput);
             NSString *nsInput = [[NSString alloc] initWithUTF8String: cInput];
             
             // Deal with inputs ...
@@ -35,9 +39,10 @@ int main(int argc, const char *argv[]) {
             } else {
                 
                 NSString *ans = [[NSString alloc] initWithString: nsInput];
-                printf("    ans = %s\n", [ans UTF8String]);
+                [workspace updateVaribaleDicWithValue: ans Name: @"ans"];
+                printf("    %s = %s\n", [@"ans" UTF8String], [ans UTF8String]);
             
-            }
+            } 
         }
 
         printf("\n");
