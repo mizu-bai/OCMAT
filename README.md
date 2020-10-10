@@ -14,5 +14,5 @@ An Experimental Interpreter for `MATLAB` Language
 
 ## 文件结构
 
-`OCMAT/main.m`: 程序入口
-`OCMAT/Lexer/Lexer.*`: 词法分析类
+* `OCMAT/main.m`: 程序入口
+* `OCMAT/Lexer/Lexer.*`: 词法分析类
