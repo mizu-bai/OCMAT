@@ -12,6 +12,8 @@ An Experimental Interpreter for `MATLAB` Language
 
 因为还没花精力学 `C++` （恼）
 
+`Swift` 调 `C` 的函数不方便
+
 ## 文件结构
 
 * `OCMAT/main.m`: 程序入口
