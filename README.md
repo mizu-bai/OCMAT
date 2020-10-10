@@ -2,7 +2,7 @@
 
 An Experimental Interpreter for `MATLAB` Language
 
-一个试验性的 `MATLAB` 语言解释器（写着玩）
+一个试验性的 `MATLAB` 语言编译器（写着玩）
 
 ## Why MATLAB
 
@@ -11,3 +11,8 @@ An Experimental Interpreter for `MATLAB` Language
 ## Why OC
 
 因为还没花精力学 `C++` （恼）
+
+## 文件结构
+
+`OCMAT/main.m`: 程序入口
+`OCMAT/Lexer/Lexer.*`: 词法分析类
