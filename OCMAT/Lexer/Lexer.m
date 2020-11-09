@@ -16,41 +16,32 @@
         NSArray * keywordsObj = @[@"BREAK", @"CASE", @"CATCH", @"CLASSDEF", @"CONTINUE", @"ELSE", @"ELSEIF", @"END", @"FOR", @"FUNCTION", @"GLOBAL", @"IF", @"OTHERWISE", @"PARFOR", @"PERSISTENT", @"RETURN", @"SPMD", @"SWITCH", @"TRY", @"WHILE"];
         NSArray * keywordsKey = @[@"break", @"case", @"catch", @"classdef", @"continue", @"else", @"elseif", @"end", @"for", @"function", @"global", @"if", @"otherwise", @"parfor", @"persistent", @"return", @"spmd", @"switch", @"try", @"while"];
         self.KeywordsDic = [NSDictionary dictionaryWithObjects: keywordsObj forKeys: keywordsKey];
-//        NSLog(@"%@", self.KeywordsDic);
         
         // init Mathematical Operators dictionary
         NSArray * mathematicalOperatorsObj = @[@"PLUS", @"MINUS", @"TIMES", @"MTIMES", @"RDIVIDE", @"MRDIVIDE", @"LDIVIDE", @"MLDIVIDE", @"POWER", @"MPOWER", @"TRANSPOSE", @"CTRANSPOSE"];
         NSArray * mathematicalOperatorsKey = @[@"+", @"-", @".*", @"*", @"./", @"/", @".\\", @"\\", @".^", @"^", @".'", @"'"];
         self.MathematicalOperatorsDic = [NSDictionary dictionaryWithObjects: mathematicalOperatorsObj forKeys: mathematicalOperatorsKey];
-//        NSLog(@"%@", self.MathematicalOperatorsDic);
         
         // init Relational Operators dictionary
         NSArray * relationalOperatorsObj = @[@"EQ", @"NE", @"GT", @"GE", @"LT", @"LE"];
         NSArray * relationalOperatorsKey = @[@"==", @"~=", @">", @">=", @"<", @"<="];
         self.RelationalOperatorsDic = [NSDictionary dictionaryWithObjects: relationalOperatorsObj forKeys: relationalOperatorsKey];
-//        NSLog(@"%@", self.RelationalOperatorsDic);
         
         // init Logical Operators dictionary
         NSArray * logicalOperatorsObj = @[@"AND", @"OR", @"SHORT_CIRCUIT_AND", @"SHORT_CIRCUIT_OR", @"NOT"];
         NSArray * logicalOperatorsKey = @[@"&", @"|", @"&&", @"||", @"~"];
         self.LogicalOperatorsDic = [NSDictionary dictionaryWithObjects: logicalOperatorsObj forKeys: logicalOperatorsKey];
-//        NSLog(@"%@", self.LogicalOperatorsDic);
         
         // init Delimiters dictionary
         NSArray * delimitersObj = @[@"AT", @"DOT", @"DOT_DOT_DOT", @"COMMA", @"COLON", @"SEMICOLON", @"LEFT_PARENTHESE", @"RIGHT_PARENTHESE", @"LEFT_SQUARE_BRACKETS", @"RIGHT_SQUARE_BRACKETS", @"LEFT_CURLY_BRACKETS", @"RIGHT_CURLY_BRACKETS", @"PERCENT", @"LEFT_PERCENT_CURLY_BRACKET", @"RIGHT_PERCENT_CURLY_BRACKET", @"EXCLAMATION_POINT", @"QUESTION_MARK", @"SINGLE_QUOTE", @"DOUBLE_QUOTE", @"TILDE", @"EUQAL_SIGN", @"LEFT_ANGLE_BRACKET_AND_AMPERSAND", @"DOT_QUESTION_MARK"];
         NSArray * delimitersKey = @[@"@", @".", @"...", @",", @":", @";", @"(", @")", @"[", @"]", @"{", @"}", @"%", @"%{", @"%}", @"!", @"?", @"'", @"\"", @"~", @"=", @"< &", @".?"];
         self.DelimitersDic = [NSDictionary dictionaryWithObjects: delimitersObj forKeys: delimitersKey];
-//        NSLog(@"%@", self.DelimitersDic);
     }
-    
-    // init Token
-    self.Token = [[NSMutableDictionary alloc] init];
-//    NSLog(@"%@", self.Token);
-    
+        
     return self;
 }
 
-- (id)isKeywordInLine:(NSString *)line AtIndex:(int)p {
+- (id)isKeywordInLine: (NSString *)line AtIndex: (int)p {
     if(p >= [line length]) {
         return [NSNull null];
     }
@@ -64,13 +55,14 @@
         }
     }
     if([possibleKeywords count] != 0) {
-        while(p + 1 < [line length] && isLetter([line characterAtIndex: p + 1])) {
+        while(p + 1 < [line length] && isalpha([line characterAtIndex: p + 1])) {
             p += 1;
             [currentString appendFormat: @"%c", [line characterAtIndex: p]];
         }
         for(NSString * keyword in possibleKeywords) {
             if([currentString isEqual: keyword]) {
-                return [self.KeywordsDic objectForKey: currentString];
+                NSDictionary * res = @{@"type": [self.KeywordsDic objectForKey: currentString], @"literal": @"-", @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+                return res;
             }
         }
     }
@@ -90,13 +82,10 @@
         }
         p += 1;
         [currentString appendFormat: @"%c", [line characterAtIndex: p]];
-        for(NSString * mathematicalOperator in possibleMathematicalOperators) {
-            if([currentString isEqual: mathematicalOperator]) {
-                return [self.MathematicalOperatorsDic objectForKey: currentString];
-            }
-        }
-    } else {
-        return [self.MathematicalOperatorsDic objectForKey: currentString];
+    }
+    if([[self.MathematicalOperatorsDic allKeys] containsObject: currentString]) {
+            NSDictionary * res = @{@"type": [self.MathematicalOperatorsDic  objectForKey: currentString], @"literal": @"-", @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+            return res;
     }
     return [NSNull null];
 }
@@ -117,13 +106,10 @@
             p += 1;
             [currentString appendFormat: @"%c", [line characterAtIndex: p]];
         }
-        for(NSString * relationalOperator in possibleRelationalOperators) {
-            if([currentString isEqual: relationalOperator]) {
-                return [self.RelationalOperatorsDic objectForKey: currentString];
-            }
-        }
-    } else {
-        return [self.MathematicalOperatorsDic objectForKey: currentString];
+    }
+    if([[self.RelationalOperatorsDic allKeys] containsObject: currentString]) {
+        NSDictionary * res = @{@"type": [self.RelationalOperatorsDic objectForKey: currentString], @"literal": @"-", @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+        return res;
     }
     return [NSNull null];
 }
@@ -140,17 +126,14 @@
                 [possibleLogicalOperators addObject: logicalOperator];
             }
         }
-        while(p + 1 < [line length] && !(isLetter([line characterAtIndex: p + 1]) && isNum([line characterAtIndex: p + 1]))) {
+        while(p + 1 < [line length] && !isalnum([line characterAtIndex: p + 1])) {
             p += 1;
             [currentString appendFormat: @"%c", [line characterAtIndex: p]];
         }
-        for(NSString * logicalOperator in possibleLogicalOperators) {
-            if([currentString isEqual: logicalOperator]) {
-                return [self.LogicalOperatorsDic objectForKey: currentString];
-            }
-        }
-    } else {
-        return [self.LogicalOperatorsDic objectForKey: currentString];
+    }
+    if([[self.LogicalOperatorsDic allKeys] containsObject: currentString]) {
+        NSDictionary * res = @{@"type": [self.LogicalOperatorsDic objectForKey: currentString], @"literal": @"-", @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+        return res;
     }
     return [NSNull null];
 }
@@ -167,30 +150,27 @@
                 [possibleDelimiters addObject: delimiter];
             }
         }
-        while(p + 1 < [line length] && !(isLetter([line characterAtIndex: p + 1]) && isNum([line characterAtIndex: p + 1]))) {
+        while(p + 1 < [line length] && !isalnum([line characterAtIndex: p + 1])) {
             p += 1;
             [currentString appendFormat: @"%c", [line characterAtIndex: p]];
         }
-        for(NSString * delimiter in possibleDelimiters) {
-            if([currentString isEqual: delimiter]) {
-                return [self.DelimitersDic objectForKey: currentString];
-            }
-        }
-    } else {
-        return [self.DelimitersDic objectForKey: currentString];
+    }
+    if([[self.DelimitersDic allKeys] containsObject: currentString]) {
+        NSDictionary * res = @{@"type": [self.DelimitersDic objectForKey: currentString], @"literal": @"-", @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+        return res;
     }
     return [NSNull null];
 }
 
-- (id)isConstInLine: (NSString *)line AtIndex: (int)p {
+- (id)isNumberConstInLine: (NSString *)line AtIndex: (int)p {
     if(p >= [line length]) {
         return [NSNull null];
     }
-    if(!isNum([line characterAtIndex: p])) {
+    NSMutableString * currentString = [NSMutableString stringWithFormat: @"%c", [line characterAtIndex: p]];
+    if(!(isdigit([line characterAtIndex: p]) || [line characterAtIndex: p] == '+' || [line characterAtIndex: p] == '-')) {
         return [NSNull null];
     }
-    NSMutableString * currentString = [NSMutableString stringWithFormat: @"%c", [line characterAtIndex: p]];
-    while(p + 1 < [line length] && (isNum([line characterAtIndex: p + 1]) || [line characterAtIndex: p + 1] == '.' || [line characterAtIndex: p + 1] == 'E' || [line characterAtIndex: p + 1] == 'e' || [line characterAtIndex: p + 1] == '+' || [line characterAtIndex: p + 1] == '-')) {
+    while(p + 1 < [line length] && (isnumber([line characterAtIndex: p + 1]) || [line characterAtIndex: p + 1] == 'E' || [line characterAtIndex: p + 1] == 'e' || [line characterAtIndex: p + 1] == '+' || [line characterAtIndex: p + 1] == '-' || [line characterAtIndex: p + 1] == '.')) {
         p += 1;
         [currentString appendFormat: @"%c", [line characterAtIndex: p]];
     }
@@ -204,40 +184,61 @@
             eCount += 1;
             dotCount = 0;
         }
-        if(eCount > 1) {
-            return [NSNull null];
-        }
-        if(dotCount > 1) {
+        if(eCount > 1 || dotCount > 1) {
             return [NSNull null];
         }
     }
     if([currentString hasSuffix: @"e"] || [currentString hasSuffix: @"E"]) {
         return [NSNull null];
     }
-    return currentString;
+    NSDictionary * res = @{@"type": @"CONST", @"literal": currentString, @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+    return res;
+}
+
+- (id)isStringConstInLine: (NSString *)line AtIndex: (int)p {
+    if(p >= [line length]) {
+        return [NSNull null];
+    }
+    int singleQuoteCount = 0;
+    int doubleQuoteCount = 0;
+    if([line characterAtIndex: p] == '\'') {
+        singleQuoteCount = 1;
+    } else if([line characterAtIndex: p] == '\"') {
+        doubleQuoteCount = 1;
+    } else {
+        return [NSNull null];
+    }
+    NSMutableString * currentString = [NSMutableString stringWithFormat: @"%c", [line characterAtIndex: p]];
+    while(p + 1 < [line length]) {
+        p += 1;
+        [currentString appendFormat: @"%c", [line characterAtIndex: p]];
+        if([line characterAtIndex: p] == '\'') {
+            singleQuoteCount += 1;
+        } else if([line characterAtIndex: p] == '\"') {
+            doubleQuoteCount += 1;
+        }
+        if(singleQuoteCount == 2 || doubleQuoteCount == 2) {
+            NSDictionary * res = @{@"type": @"CONST", @"literal": currentString, @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+            return res;
+        }
+    }
+    return [NSNull null];
 }
 
 - (id)isIdentifierInLine: (NSString *)line AtIndex: (int)p {
     if(p >= [line length]) {
         return [NSNull null];
     }
-    if(!isLetter([line characterAtIndex: p])) {
+    if(!isalpha([line characterAtIndex: p])) {
         return [NSNull null];
     }
     NSMutableString * currentString = [NSMutableString stringWithFormat: @"%c", [line characterAtIndex: p]];
-    while(p + 1 < [line length] && ((isLetter([line characterAtIndex: p + 1]) || isNum([line characterAtIndex: p + 1])))) {
+    while(p + 1 < [line length] && isalnum([line characterAtIndex: p + 1])) {
         p += 1;
         [currentString appendFormat: @"%c", [line characterAtIndex: p]];
     }
-    return currentString;
-}
-
-- (void)formTokenWith: (NSString *)type AndLiteral: (id)literal {
-    [self.Token setObject: type forKey: literal];
-}
-
-- (void)clearToken {
-    [self.Token removeAllObjects];
+    NSDictionary * res = @{@"type": @"IDENTIFIER", @"literal": currentString, @"movingStep": [NSNumber numberWithInt: (int)[currentString length]]};
+    return res;
 }
 
 @end
