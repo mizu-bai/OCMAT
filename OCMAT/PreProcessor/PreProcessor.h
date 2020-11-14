@@ -11,12 +11,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PreProcessor : NSObject
 
-@property NSString * sourceFilePath;
-@property NSString * sourceFileContent;
+@property NSString * sourceContent;
 @property NSString * preProcessedContent;
 
-- (id)initSourceFilePathWith: (NSString *)sourceFilePath;
-- (id)readSourceFile;
+- (id)initWithSourceContent: (NSString *)inputSourceContent;
+- (void)preProcess;
 
 @end
 

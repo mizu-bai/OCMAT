@@ -6,38 +6,58 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PreProcessor/PreProcessor.h"
 #import "Lexer/Lexer.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        NSString * content = @"clear; clc; c = [0.0218, 0.0547, 0.111, 0.220, 0.329, 0.439, 0.550, 0.740]; gamma = [65.97, 57.69, 50.93, 44.35, 40.88, 36.35, 34.83, 31.63]; lgc = log10(c); figure(1); plot(lgc, gamma, 'ro'); hold on; p = polyfit(lgc, gamma, 1); plot(lgc, polyval(p, lgc), 'b-'); hold off; figure(2);";
+        // Read File
+        NSString * content = [[NSString alloc] init];
+        if(argc != 2) {
+            NSLog(@"Invaild Input Parameters!");
+            exit(-1);
+        } else {
+            NSString * filePath = [NSString stringWithFormat: @"%s", argv[1]];
+            NSFileManager * fileManager = [NSFileManager defaultManager];
+            if([fileManager fileExistsAtPath: filePath]) {
+                NSData * data = [NSData dataWithContentsOfFile: filePath];
+                content = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+            } else {
+                NSLog(@"No Such File Exists At \"%@\"!", filePath);
+                exit(-1);
+            }
+        }
+        // PreProcessor
+        PreProcessor * preProcessor = [[PreProcessor alloc] initWithSourceContent: content];
+        [preProcessor preProcess];
+        NSString * preProcessedContent = [preProcessor preProcessedContent];
+        // Lexer
         Lexer * lexer = [[Lexer alloc] init];
         int p = 0;
         NSMutableArray * tokenArray = [[NSMutableArray alloc] init];
-        while(p < [content length]) {
-//            while([content characterAtIndex: p] == ' ' || iscntrl([content characterAtIndex: p])) {
-            while([content characterAtIndex: p] == ' ' || [content characterAtIndex: p] == '\n' || [content characterAtIndex: p] == '\t') {
-                if(p + 1 >= [content length]) {
+        while(p < [preProcessedContent length] - 1) {
+            while(isspace([preProcessedContent characterAtIndex: p])) {
+                if(p + 1 >= [preProcessedContent length]) {
                     break;
                 } else {
                     p += 1;
                 }
             }
             NSMutableArray * res = [[NSMutableArray alloc] init];
-            if(isalpha([content characterAtIndex: p])) {
-                [res addObject: [lexer isKeywordInLine:              content AtIndex: p]];
-                [res addObject: [lexer isIdentifierInLine:           content AtIndex: p]];
-            } else if(isdigit([content characterAtIndex: p])) {
-                [res addObject: [lexer isNumberConstInLine:          content AtIndex: p]];
-            } else if(!isalnum([content characterAtIndex: p])) {
-                [res addObject: [lexer isNumberConstInLine:          content AtIndex: p]];
-                [res addObject: [lexer isStringConstInLine:          content AtIndex: p]];
-                [res addObject: [lexer isDelimiterInLine:            content AtIndex: p]];
-                [res addObject: [lexer isMathematicalOperatorInLine: content AtIndex: p]];
-                [res addObject: [lexer isRelationalOperatorInLine:   content AtIndex: p]];
-                [res addObject: [lexer isLogicalOperatorInLine:      content AtIndex: p]];
+            if(isalpha([preProcessedContent characterAtIndex: p])) {
+                [res addObject: [lexer isKeywordInLine:              preProcessedContent AtIndex: p]];
+                [res addObject: [lexer isIdentifierInLine:           preProcessedContent AtIndex: p]];
+            } else if(isdigit([preProcessedContent characterAtIndex: p])) {
+                [res addObject: [lexer isNumberConstInLine:          preProcessedContent AtIndex: p]];
+            } else if(!isalnum([preProcessedContent characterAtIndex: p])) {
+                [res addObject: [lexer isNumberConstInLine:          preProcessedContent AtIndex: p]];
+                [res addObject: [lexer isStringConstInLine:          preProcessedContent AtIndex: p]];
+                [res addObject: [lexer isDelimiterInLine:            preProcessedContent AtIndex: p]];
+                [res addObject: [lexer isMathematicalOperatorInLine: preProcessedContent AtIndex: p]];
+                [res addObject: [lexer isRelationalOperatorInLine:   preProcessedContent AtIndex: p]];
+                [res addObject: [lexer isLogicalOperatorInLine:      preProcessedContent AtIndex: p]];
             } else {
-                NSLog(@"Cannot Determine Type of %c At %d!", [content characterAtIndex: p], p);
+                NSLog(@"Cannot Determine Type of %c At %d!", [preProcessedContent characterAtIndex: p], p);
                 exit(-1);
             }
             for(id obj in res) {

@@ -9,21 +9,62 @@
 
 @implementation PreProcessor
 
-- (id)initSourceFilePathWith: (NSString *)sourceFilePath {
+- (id)initWithSourceContent: (NSString *)inputSourceContent {
     self = [super init];
     if(self) {
-        self.sourceFileContent = sourceFilePath;
+        self.sourceContent = inputSourceContent;
     }
     return self;
 }
 
-- (id)readSourceFile {
-    NSString * error;
-    self.sourceFileContent = [NSString stringWithContentsOfFile: self.sourceFilePath encoding: NSUTF8StringEncoding error: nil];
-    if(error) {
-        
+- (void)preProcess {
+    NSArray * contentItems = [self.sourceContent componentsSeparatedByString: @"\n"];
+    NSMutableArray * res = [[NSMutableArray alloc] init];
+    int isInSingleLineComment = 0;
+    int isInMultiLineComment = 0;
+    for(NSString * item in contentItems) {
+        NSMutableString * newLine = [[NSMutableString alloc] init];
+        int p = 0;
+        while(p < [item length]) {
+            if([item characterAtIndex: p] == '%') {
+                if(p + 1 < [item length]) {
+                    NSString * newCar = [NSString stringWithFormat: @"%c", [item characterAtIndex: p + 1]];
+                    if([newCar isEqual: @"{"]) {
+                        // Start of Multi Line Comment
+                        isInMultiLineComment += 1;
+                    } else if([newCar isEqual: @"}"]) {
+                        // End if Multi Line Comment
+                        isInMultiLineComment -= 1;
+                    } else {
+                        // Single Line Comment
+                        isInSingleLineComment = 1;
+                    }
+                }
+            }
+            [newLine appendFormat: @"%c", [item characterAtIndex: p]];
+            p += 1;
+        }
+        if(isInSingleLineComment == 1) {
+            [res addObject: @""];
+            isInSingleLineComment = 0;
+            continue;
+        }
+        if(isInMultiLineComment == 0) {
+            if([newLine hasPrefix: @"%}"]) {
+                [res addObject: [newLine substringFromIndex: 2]];
+            } else {
+                [res addObject: newLine];
+            }
+        } else if(isInMultiLineComment == 1) {
+            [res addObject: @""];
+            continue;
+        }
     }
-    return
+    if(isInMultiLineComment != 0) {
+        NSLog(@"Unterminated Comment!");
+        exit(-1);
+    }
+    self.preProcessedContent = [res componentsJoinedByString: @"\n"];
 }
 
 @end
