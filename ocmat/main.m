@@ -35,11 +35,9 @@ int main(int argc, const char * argv[]) {
         Lexer * lexer = [[Lexer alloc] init];
         int p = 0;
         NSMutableArray * tokenArray = [[NSMutableArray alloc] init];
-        while(p < [preProcessedContent length] - 1) {
+        while(p < [preProcessedContent length]) {
             while(isspace([preProcessedContent characterAtIndex: p])) {
-                if(p + 1 >= [preProcessedContent length]) {
-                    break;
-                } else {
+                if(p + 1 < [preProcessedContent length]) {
                     p += 1;
                 }
             }
@@ -60,6 +58,7 @@ int main(int argc, const char * argv[]) {
                 NSLog(@"Cannot Determine Type of %c At %d!", [preProcessedContent characterAtIndex: p], p);
                 exit(-1);
             }
+            int isAllNull = 1;
             for(id obj in res) {
                 if(![obj isEqual: [NSNull null]]) {
                     NSString * type         = [obj objectForKey: @"type"];
@@ -67,8 +66,12 @@ int main(int argc, const char * argv[]) {
                     NSString * currentToken = [NSString stringWithFormat: @"<%@, %@>", type, literal];
                     [tokenArray addObject: currentToken];
                     p += [[obj objectForKey: @"movingStep"] intValue];
+                    isAllNull = 0;
                     break;
                 }
+            }
+            if(isAllNull == 1) {
+                p += 1;
             }
         }
         NSLog(@"%@", tokenArray);

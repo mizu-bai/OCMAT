@@ -28,11 +28,11 @@
         while(p < [item length]) {
             if([item characterAtIndex: p] == '%') {
                 if(p + 1 < [item length]) {
-                    NSString * newCar = [NSString stringWithFormat: @"%c", [item characterAtIndex: p + 1]];
-                    if([newCar isEqual: @"{"]) {
+                    NSString * nextChar = [NSString stringWithFormat: @"%c", [item characterAtIndex: p + 1]];
+                    if([nextChar isEqual: @"{"]) {
                         // Start of Multi Line Comment
                         isInMultiLineComment += 1;
-                    } else if([newCar isEqual: @"}"]) {
+                    } else if([nextChar isEqual: @"}"]) {
                         // End if Multi Line Comment
                         isInMultiLineComment -= 1;
                     } else {
