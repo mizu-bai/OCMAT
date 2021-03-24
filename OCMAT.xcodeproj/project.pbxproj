@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17E3E46B26045C3E00431DEE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E3E46A26045C3E00431DEE /* main.m */; };
+		DD74D9E5A98FDDAA202155BF /* MZLexer.m in Sources */ = {isa = PBXBuildFile; fileRef = DD74D5E972E74030FDC863F7 /* MZLexer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,9 @@
 /* Begin PBXFileReference section */
 		17E3E46726045C3E00431DEE /* OCMAT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OCMAT; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E3E46A26045C3E00431DEE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DD74D42959954EB3CDA16945 /* type_codes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type_codes.h; sourceTree = "<group>"; };
+		DD74D5E972E74030FDC863F7 /* MZLexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MZLexer.m; sourceTree = "<group>"; };
+		DD74D965BE9D7F75A3D1B74B /* MZLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MZLexer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +62,19 @@
 			isa = PBXGroup;
 			children = (
 				17E3E46A26045C3E00431DEE /* main.m */,
+				DD74DD33ACCF7E7042A3E662 /* Lexer */,
 			);
 			path = OCMAT;
+			sourceTree = "<group>";
+		};
+		DD74DD33ACCF7E7042A3E662 /* Lexer */ = {
+			isa = PBXGroup;
+			children = (
+				DD74D965BE9D7F75A3D1B74B /* MZLexer.h */,
+				DD74D5E972E74030FDC863F7 /* MZLexer.m */,
+				DD74D42959954EB3CDA16945 /* type_codes.h */,
+			);
+			name = Lexer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -88,6 +103,7 @@
 		17E3E45F26045C3E00431DEE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = MZ;
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					17E3E46626045C3E00431DEE = {
@@ -119,6 +135,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17E3E46B26045C3E00431DEE /* main.m in Sources */,
+				DD74D9E5A98FDDAA202155BF /* MZLexer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
