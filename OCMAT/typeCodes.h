@@ -1,13 +1,13 @@
 //
-//  type_codes.h
+//  typeCodes.h
 //  OCMAT
 //
 //  Created by mizu-bai on 2021/3/23.
 //
 //
 
-#ifndef type_codes_h
-#define type_codes_h
+#ifndef typeCodes_h
+#define typeCodes_h
 
 /**
  * In this header file, macros with the type codes are defined.
@@ -25,7 +25,7 @@
 #define CONST_COMPLEX                       1001
 #define INFINITY                            1002
 #define NOT_A_NUMBER                        1003
-// characters and strings
+// character and string constants
 #define CONST_STRING                        1100
 #define CONST_CHARACTER                     1101
 
@@ -78,6 +78,8 @@
 #define DOUBLE_AMPERSAND                    3202
 #define DOUBLE_VERTICAL_PIPE                3203
 #define TILDE                               3204
+// assign
+#define EQUAL                               3300
 
 /// delimiters
 #define AT                                  4001
@@ -102,6 +104,5 @@
 #define QUOTATION                           4019
 // TILDE (symbol "~") is also a symbol in operators
 // #define TILDE                            4020
-#define EQUAL                               4021
 
-#endif /* type_codes_h */
+#endif /* typeCodes_h */

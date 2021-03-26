@@ -10,7 +10,6 @@
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
-        // test file path /Users/lijunhong/untitled.m
         /// file management
         char temp[128];
         printf("Please input the path of source code file: ");
@@ -58,6 +57,8 @@ int main(int argc, const char *argv[]) {
             [lexer readLine:arrayLines[(NSUInteger) i]];
             printf("%2d | %s\n", i + 1, [lexer.bufferString UTF8String]);
         }
+        // automate selector
+        NSLog(@"%d", [lexer automateSelectorInLine:@"clear" AtIndexOfChar:0]);
     }
     return 0;
 }

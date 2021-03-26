@@ -2,7 +2,7 @@
 //  MZLexer.m
 //  OCMAT
 //
-//  Created by mizu on 2021/3/23.
+//  Created by mizu-bai on 2021/3/23.
 //
 //
 
@@ -15,6 +15,9 @@
 @property(nonatomic, copy) NSDictionary *keywordsDict;
 @property(nonatomic, copy) NSDictionary *operatorsDict;
 @property(nonatomic, copy) NSDictionary *delimitersDict;
+
+@property(nonatomic, copy) NSSet *operatorsCharSet;
+@property(nonatomic, copy) NSSet *delimitersCharSet;
 
 @end
 
@@ -74,9 +77,11 @@
                 @"&&": @DOUBLE_AMPERSAND,
                 @"||": @DOUBLE_VERTICAL_PIPE,
                 @"~": @TILDE,
+                // assign
+                @"=": @EQUAL,
         };
 
-        // set DelimiterDict
+        // set delimiterDict
         self.delimitersDict = @{
                 // delimiters
                 @"@": @AT,
@@ -97,8 +102,23 @@
                 @"!": @EXCLAMATION,
                 @"?": @QUESTION,
                 @"\"": @QUOTATION,
-                @"=": @EQUAL,
         };
+        // set operatorsCharSet
+        NSMutableArray *arrayCharSetM = [NSMutableArray array];
+        for (NSString *operator in self.operatorsDict.allKeys) {
+            for (int i = 0; i < [operator length]; ++i) {
+                [arrayCharSetM addObject:[operator substringWithRange:NSMakeRange((NSUInteger) i, 1)]];
+            }
+        }
+        self.operatorsCharSet = [NSSet setWithArray:[arrayCharSetM copy]];
+        // set delimitersCharSet
+        [arrayCharSetM removeAllObjects];
+        for (NSString *delimiter in self.delimitersDict.allKeys) {
+            for (int i = 0; i < [delimiter length]; ++i) {
+                [arrayCharSetM addObject:[delimiter substringWithRange:NSMakeRange((NSUInteger) i, 1)]];
+            }
+        }
+        self.delimitersCharSet = [NSSet setWithArray:[arrayCharSetM copy]];
     }
     return self;
 }
@@ -109,6 +129,51 @@
 
 - (void)readLine:(NSString *)line {
     self.bufferString = line;
+}
+
+- (enum MZAutomateType)automateSelectorInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    NSString *firstChar = [line substringWithRange:NSMakeRange(index, 1)];
+    enum MZAutomateType automateType = MZAutomateUnknown;
+    if (isnumber([firstChar characterAtIndex:0])) {
+        automateType = MZAutomateConstantNumber;
+    } else if ([firstChar isEqualToString:@"'"] || [firstChar isEqualToString:@"\""]) {
+        automateType = MZAutomateConstantCharacterAndString;
+    } else if (isalpha([firstChar characterAtIndex:0])) {
+        automateType = MZAutomateIdentifierAndKeyword;
+    } else if ([self.operatorsCharSet containsObject:firstChar]) {
+        automateType = MZAutomateOperator;
+    } else if ([self.delimitersCharSet containsObject:firstChar]) {
+        automateType = MZAutomateDelimiter;
+    }
+    return automateType;
+}
+
+- (NSDictionary *)AutomateIdentifierAndKeywordInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
+}
+
+- (NSDictionary *)AutomateConstantNumberInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
+}
+
+- (NSDictionary *)AutomateConstantCharacterAndStringInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
+}
+
+- (NSDictionary *)AutomateOperatorMathematicalInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
+}
+
+- (NSDictionary *)AutomateOperatorLogicalInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
+}
+
+- (NSDictionary *)AutomateOperatorRelationalInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
+}
+
+- (NSDictionary *)AutomateDelimiterInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index {
+    return nil;
 }
 
 

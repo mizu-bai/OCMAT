@@ -8,7 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-#import "type_codes.h"
+#import "typeCodes.h"
+
+enum MZAutomateType {
+    MZAutomateUnknown = 0,
+    MZAutomateIdentifierAndKeyword = 1,
+    MZAutomateConstantNumber = 2,
+    MZAutomateConstantCharacterAndString = 4,
+    MZAutomateOperator = 8,
+    MZAutomateDelimiter = 16,
+};
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +30,22 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)lexer;
 
 - (void)readLine:(NSString *)line;
+
+- (enum MZAutomateType)automateSelectorInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateIdentifierAndKeywordInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateConstantNumberInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateConstantCharacterAndStringInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateOperatorMathematicalInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateOperatorLogicalInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateOperatorRelationalInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
+
+- (NSDictionary *)AutomateDelimiterInLine:(NSString *)line AtIndexOfChar:(NSUInteger)index;
 
 @end
 
